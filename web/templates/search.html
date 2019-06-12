@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {#<meta name="viewport" content="width=device-width, initial-scale=1.0">#}
+    <link href="{{ url_for('static',filename='css/bootstrap-responsive.css') }}" rel="stylesheet">
+    <title>{% block title %}{% endblock %}-企业搜索系统</title>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/base.css') }}">
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    {% block head %}{% endblock %}
+    <style>
+        .picsize {
+            width: 50px;
+            height: 36px;
+        }
+    </style>
+</head>
+{#<head>#}
+{#    <title>企业搜索系统</title>#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">#}
+{#    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"#}
+{#          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">#}
+{#    <link rel="stylesheet"#}
+{#          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">#}
+{#</head>#}
+{#<head>#}
+{#    <title>企业搜索系统</title>#}
+{#    <style type="text/css">#}
+{#        div#doc {#}
+{#            width: 800px#}
+{#        }#}
+{##}
+{#        .pagination-page-info {#}
+{#            padding: .6em;#}
+{#            padding-left: 0;#}
+{#            width: 40em;#}
+{#            margin: .5em;#}
+{#            margin-left: 0;#}
+{#            font-size: 12px;#}
+{#        }#}
+{##}
+{#        .pagination-page-info b {#}
+{#            color: black;#}
+{#            background: #6aa6ed;#}
+{#            padding-left: 2px;#}
+{#            padding: .1em .25em;#}
+{#            font-size: 150%;#}
+{#        }#}
+{#    </style>#}
+{#</head>#}
+
+<body>
+<div id="container">
+    <div id="header">
+        <h1 style="color: black; text-align: center; text-shadow: white 0.1em 0.1em 0.2em;margin-top: 50px;">企业搜索系统</h1>
+        <br/>
+        <form name="search" action="/search/" method="POST" style="text-align: center">
+            <p>
+                {% if key %}
+                    <input type="text" name="key_word" value="{{ key }}">
+                {% else %}
+                    <input type="text" name="key_word" placeholder="请输入关键字">
+                {% endif %}
+                <input type="submit" value="Search">
+            </p>
+        </form>
+
+    </div>
+    <hr/>
+    {% block high_search %}
+    {% endblock %}
+    {% if error %}
+        {% for doc in docs %}
+            <div id="doc">
+                <ul id="navigation">
+                    <p><big><a href="/search/{{ doc.id }}/" target="_blank">{{ doc.title }}</a></big></p>
+                    <small class="form-text text-muted">{{ doc.time }}</small>
+                    <p class="card-text">{{ doc.snippet }}<br/>
+                        <a href="{{ doc.url }}" target="_blank">{{ doc.url }}</a>
+                    </p>
+                </ul>
+            </div>
+            <br/>
+        {% endfor %}
+        {% block next %}
+            <ul>
+                {% for i in page %}
+                    <a href="/search/page/{{ i }}/">{{ i }}</a>&nbsp;
+                {% endfor %}
+            </ul>
+        {% endblock %}
+    {% else %}
+        <p>对不起，没有您搜索的网页！</p>
+    {% endif %}
+
+    <div id="footer" style="text-align: right;right:0px;bottom:0px;">
+        <hr>
+        &copy; 2019 <a href="https://github.com/1160300901/" target="_blank">孙月晴</a>
+    </div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+</body>
+</html>

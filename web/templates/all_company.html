@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>企业检索</title>
+
+    <!-- Bootstrap -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/navbar.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/experts.css">
+    <link rel="stylesheet" href="../css/all_company.css">
+    <link rel="stylesheet" href="../css/page-control.css">
+    <link rel="stylesheet" href="../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/alert-control.css">
+    <!-- <link rel="stylesheet" href="../css/pagination.css"> -->
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <!--导航栏 begin-->
+    <div class="container">
+        <header>
+            <section class="top clrfix">
+                <div id="unlogin" class="login_switch">
+                    <a>登录</a>
+                    <a>注册</a>
+                </div>
+                <u id="user" class="login_switch"></u>
+                <form class="navbar-form searcher" role="search">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="请输入关键字">
+                    </div>
+                    <button type="submit" class="btn btn-default">搜索</button>
+                </form>
+            </section>
+            <nav class="nav navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle nav_toggole" data-toggle="collapse" data-target="#example-navbar-collapse">
+                            <span class="sr-only">切换导航</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                    </div>
+                    <div class="collapse navbar-collapse" id="example-navbar-collapse">
+                        <ul class="nav nav_grids nav-justified">
+                            <li><a class="nav_item" href="/robot/account/returnIndex/">首页</a></li>
+                            <li><a class="nav_item" href="/robot/information/">资讯</a></li>
+                            <li><a class="nav_item" href="/robot/case/">案例</a></li>
+                            <li class="active"><a class="nav_item" href="/robot/company/">企业</a></li>
+                            <li><a class="nav_item" href="/robot/expert/">专家</a></li>
+                            <li><a class="nav_item" href="/robot/product/">产品</a></li>
+                            <li><a class="nav_item" href="./demand.html">需求</a></li>
+                            <li><a class="nav_item" href="./about.html">关于我们</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+    <!--导航栏 end-->
+
+    <div class="container">
+        <!--当前位置-->
+        <div class="curr_position">
+            当前位置：
+            <a href="/robot/account/returnIndex/">首页</a>
+            <span>></span>
+            <a>企业检索</a>
+        </div>
+        <!--当前位置-->
+    </div>
+
+    <!-- 企业 begin -->
+    <div class="container bs-docs-container main_container">
+
+        <!-- 企业分类 begin -->
+        <div class="area-box panel panel-default">
+            <div id="company-number">
+                <strong>厂商检索:</strong>&emsp;共<strong>&nbsp;{{number}}&nbsp;</strong>家厂商
+            </div>
+
+            <!-- type1 begin -->
+            <div id="words-list-1" class="words-list">
+                按种类分类：
+                <ul></ul>
+                <div class="clear"></div>
+            </div>
+            <!-- type1 end -->
+
+            <!-- type2 begin -->
+            <div id="words-list-2" class="words-list">
+                按用途分类：
+                <ul></ul>
+                <div class="clear"></div>
+            </div>
+            <!-- type2 end -->
+        </div>
+        <!-- 地区分类 end -->
+
+        <!-- 企业栏目 begin -->
+        <div id="companys">
+
+            <div class="panel" v-for="site in sites">
+                <div class="cpy_media media media_add" v-bind:cpyid="site.cpyId">
+                    <div class="media-left">
+                        <img class="media-object case_img" v-bind:src="site.cpyLogo" onerror="this.src='../img/Placeholder.png'">
+                    </div>
+                    <div class="media-body">
+                        <h4>
+                            <a>{{site.cpyName}}</a>
+                            <span><small>{{site.cpyArea?site.cpyArea.areaName:'-'}}</small></span>
+                        </h4>
+                        <p>{{site.cpyIntroduce}}</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- 分页 -->
+        <div id="page_control"></div>
+        <!-- 企业栏目 end -->
+    </div>
+    <!-- 企业 end -->
+
+
+
+    <!--页脚 begin-->
+    <footer>
+        <div class="container">
+            <nav class="footer_nav">
+                <a href="/robot/account/returnIndex/">首页</a>
+                <span>|</span>
+                <a href="./about.html">关于我们</a>
+                <span>|</span>
+                <a href="#">加入收藏</a>
+            </nav>
+            <div class="copyright">
+                <p>© 版权所有 ******</p>
+            </div>
+        </div>
+    </footer>
+    <!--页脚 end-->
+
+    <!-- 消息弹框 -->
+    <div id="ajax_alert"></div>
+    <!-- 消息弹框 -->
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="../js/jquery-1.11.3.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/vue.min.js"></script>
+    <script src="../js/page-control.js"></script>
+    <script src="../js/alert-control.js"></script>
+
+    <script src="../js/all_company.js"></script>
+</body>
+
+</html>
