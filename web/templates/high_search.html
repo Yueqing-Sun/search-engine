@@ -1,10 +1,15 @@
 {% extends "search.html" %}
+{% block head %}
+    <link rel="icon" href="{{ url_for('static',filename='images/logo.png') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/login_register.css') }}">
+{% endblock %}
+
 {% block high_search%}
 <div id="select">
     <ul>
         <form name="search" action="/search/{{key}}/" method="POST">
-            <input {{checked[0]}} type="radio" name="order" id="r1" value="0" /> <label for="r1">相关度</label>
-            <input {{checked[1]}} type="radio" name="order" id="r2" value="1" /> <label for="r2">时间</label>
+            <input {{checked[0]}} type="radio" name="order" id="r1" value="0" /> <label for="r1">网页</label>
+{#            <input {{checked[1]}} type="radio" name="order" id="r2" value="1" /> <label for="r2">时间</label>#}
             <input {{checked[2]}} type="radio" name="order" id="r3" value="2" /> <label for="r3">文件</label>
             <input type="submit" value="ok">
         </form>

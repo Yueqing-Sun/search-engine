@@ -157,13 +157,22 @@ class IndexModule:
 
         c.execute('''DROP TABLE IF EXISTS news''')
         c.execute('''CREATE TABLE news
-                     (id INTEGER PRIMARY KEY, title TEXT, parapraghs TEXT, url VARCHAR, file_name TEXT)''')
+                     (id INTEGER PRIMARY KEY, title TEXT, parapraghs TEXT, url VARCHAR, file_name TEXT,rank INTEGER )''')
 
-        with open('D:\\Work\IR\\news-search-engine-master\\code\\data_new.json', encoding='utf-8') as fin:
+        with open('D:\\Work\IR\\Lab3_search_engine\\code\\data_new.json', encoding='utf-8') as fin:
             read_results = [json.loads(line.strip()) for line in fin.readlines()]
+        rank = 1
         for item in read_results:
-            t = (item['id'], item['title'], item['parapraghs'], item['url'], '\n'.join(item['file_name']))
-            c.execute("INSERT INTO news VALUES (?, ?, ?, ?, ?)", t)
+            if int(item['id']) < 300:
+                rank = 1
+            elif int(item['id']) < 600:
+                rank = 2
+            elif int(item['id']) < 900:
+                rank = 3
+            elif int(item['id']) < 1200:
+                rank = 4
+            t = (item['id'], item['title'], item['parapraghs'], item['url'], '\n'.join(item['file_name']), rank)
+            c.execute("INSERT INTO news VALUES (?, ?, ?, ?, ?,?)", t)
         # for key, value in self.postings_lists.items():
         #     doc_list = '\n'.join(map(str, value[1]))
         #     t = (key, value[0], doc_list)
@@ -172,10 +181,27 @@ class IndexModule:
         conn.commit()
         conn.close()
 
+    def construct_users(self, db_path):
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
+
+        c.execute('''DROP TABLE IF EXISTS users''')
+        c.execute('''CREATE TABLE users
+                     (username VARCHAR PRIMARY KEY, password VARCHAR, rank INTEGER)''')
+        t = ('111', '111', 1)
+        c.execute("INSERT INTO users VALUES (?, ?, ?)", t)
+        t = ('222', '222', 2)
+        c.execute("INSERT INTO users VALUES (?, ?, ?)", t)
+        t = ('333', '333', 3)
+        c.execute("INSERT INTO users VALUES (?, ?, ?)", t)
+        t = ('444', '444', 4)
+        c.execute("INSERT INTO users VALUES (?, ?, ?)", t)
+        conn.commit()
+        conn.close()
+
 
 if __name__ == "__main__":
     im = IndexModule('../config.ini', 'utf-8')
-    im.construct_postings_lists()
+    # im.construct_postings_lists()
     # config = configparser.ConfigParser()
-    # im.construct_news_lists('D:\Work\IR\\news-search-engine-master\data\ir.db')
-
+    im.construct_news_lists('D:\\Work\\IR\\Lab3_search_engine\\data\\ir.db')

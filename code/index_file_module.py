@@ -140,13 +140,8 @@ class IndexModule:
 
         conn = sqlite3.connect(db_path)
         c = conn.cursor()
-
-        # c.execute('''DROP TABLE IF EXISTS files''')
-        # c.execute('''CREATE TABLE files
-        #              (id INTEGER PRIMARY KEY, file_name TEXT, parapraghs TEXT)''')
-        # c.execute('''CREATE TABLE news
-        #              (id INTEGER PRIMARY KEY, title TEXT, parapraghs TEXT, url VARCHAR, file_name TEXT)''')
         id = 1175
+        rank = 1
         for item in files:
             # TODO
             print(item)
@@ -154,9 +149,16 @@ class IndexModule:
             fullText = []
             for p in doc.paragraphs:  # 迭代docx文档里面的每一个段落
                 fullText.append(p.text)  # 保存每一个段落的文本
-            # print('\n'.join(fullText))
-            t = (id, item, '\n'.join(fullText), '', '')
-            c.execute("INSERT INTO news VALUES (?, ?, ?,?,?)", t)
+            if id - 1175 < 80:
+                rank = 1
+            elif id - 1175 < 160:
+                rank = 2
+            elif id - 1175 < 240:
+                rank = 3
+            else:
+                rank = 4
+            t = (id, item, '\n'.join(fullText), '', '', rank)
+            c.execute("INSERT INTO news VALUES (?, ?, ?,?,?,?)", t)
             id += 1
         conn.commit()
         conn.close()
@@ -165,4 +167,4 @@ class IndexModule:
 if __name__ == "__main__":
     im = IndexModule('../config.ini', 'utf-8')
     # im.construct_files_postings_lists()
-    im.construct_files_lists('D:\Work\IR\\news-search-engine-master\data\ir.db')
+    im.construct_files_lists('D:\\Work\\IR\\Lab3_search_engine\\data\\ir.db')

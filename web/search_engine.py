@@ -152,8 +152,8 @@ class SearchEngine:
     def search(self, sentence, sort_type=0):
         if sort_type == 0:
             return self.result_by_BM25(sentence)
-        elif sort_type == 1:
-            return self.result_by_time(sentence)
+        # elif sort_type == 1:
+        #     return self.result_by_time(sentence)
         elif sort_type == 2:
             return self.result_files_by_BM25(sentence)
 

@@ -26,3 +26,11 @@
 .hide{
 	display:none;
 }
+
+.main{
+    background: rgba(255,255,255,0.7);
+    width: 500px;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 10px;
+}

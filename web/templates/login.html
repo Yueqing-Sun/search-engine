@@ -1,0 +1,60 @@
+{% extends 'search.html' %}
+
+{% block title %}登录{% endblock %}
+{% block head %}
+    <link rel="icon" href="{{ url_for('static',filename='images/logo.png') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/login_register.css') }}">
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        {% if error %}
+            <p class="alert alert-danger">{{ error }}</p>
+        {% endif %}
+
+
+        <h3>Please Login</h3>
+        <form method="post" action="" class="form-inline">
+            <input type="text" class="form-control" placeholder="username" name="username"
+                   value="{{ request.form.username }}"/>
+            <input type="password" class="form-control" placeholder="password" name="password"
+                   value="{{ request.form.password }}"/>
+            <input type="submit" class="btn btn-default" value="Login"/>
+        </form>
+
+    </div>
+
+{% endblock %}
+
+{#{% block click %}#}
+{#    <div id="box" style="display: none">#}
+{#        <div id="pic">#}
+{#            <a href="https://www.wjx.top/jq/17959538.aspx" target="_blank"><img#}
+{#                    src="{{ url_for('static',filename='images/welcome.jpg') }}"#}
+{#                    alt="" class="avatar" style="width:500px;height:300px"></a>#}
+{#            <a href="javascript:void(0);" id="closeBtn">&nbsp;&nbsp;x&nbsp;&nbsp;</a>#}
+{#        </div>#}
+{#    </div>#}
+{#    <script>#}
+        {#        function a(){#}
+        {#            var tipBtn=document.getElementById("box");#}
+        {#            var closeBtn=document.getElementById("closeBtn");#}
+        {#            var tipBtn=document.getElementById("box");#}
+        {#            closeBtn.onclick=function(){#}
+        {#                tipBtn.className="hide";#}
+        {#            }#}
+        {#        }#}
+{#        window.onload = function () {#}
+{#            setTimeout(function () {#}
+{#                var tipBtn = document.getElementById("box");#}
+{#                tipBtn.style.display = "block";#}
+{#                var closeBtn = document.getElementById("closeBtn");#}
+{#                var tipBtn = document.getElementById("box");#}
+{#                closeBtn.onclick = function () {#}
+{#                    tipBtn.className = "hide";#}
+{#                }#}
+{#            }, 2700);#}
+{##}
+{#        }#}
+{#    </script>#}
+{#{% endblock %}#}

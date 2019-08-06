@@ -1,9 +1,12 @@
 #!congding = utf-8
 
-from flask import Flask, render_template, request
-
+# from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, session, g, send_from_directory, make_response, \
+    flash
 from search_engine import SearchEngine
-
+from wtforms import Form, TextField, PasswordField, BooleanField, validators
+from passlib.hash import sha256_crypt
+import gc
 import sqlite3
 import configparser
 import time
@@ -17,6 +20,9 @@ doc_dir_path = ''
 db_path = ''
 global page
 global keys
+app.config['SECRET_KEY'] = '123456'
+global rank  # 角色
+global current_username
 
 
 def init():
@@ -46,13 +52,13 @@ def search():
             print(time.clock())
             flag, page = searchidlist(keys)
             if flag == 0:
-                return render_template('search.html', error=False)
+                return render_template('search.html', error=False, username=current_username)
             docs = cut_page(page, 0)
             print(time.clock())
             return render_template('high_search.html', checked=checked, key=keys, docs=docs, page=page,
                                    error=True)
         else:
-            return render_template('search.html', error=False)
+            return render_template('search.html', error=False, username=current_username)
 
     except:
         print('search error')
@@ -65,6 +71,21 @@ def searchidlist(key, selected=0):
     flag, id_scores = se.search(key, selected)
     # 返回docid列表
     doc_id = [i for i, s in id_scores]
+
+    # TODO 根据用户等级过滤掉部分数据
+    global dir_path, db_path, rank
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    doc_id_rank = []
+    for id in doc_id:
+        c.execute("SELECT * FROM news WHERE id=?", (id,))
+        fetch = c.fetchone()
+        if fetch[5] < rank:
+            doc_id_rank.append(id)
+    doc_id.clear()
+    doc_id = doc_id_rank.copy()
+    print("**rank**: ", rank)
+    print("**doc_id**: ", doc_id)
     page = []
     for i in range(1, (len(doc_id) // 10 + 2)):
         page.append(i)
@@ -140,7 +161,7 @@ def high_search(key):
                 checked[i] = ''
         flag, page = searchidlist(key, selected)
         if flag == 0:
-            return render_template('search.html', error=False)
+            return render_template('search.html', error=False, username=current_username)
         docs = cut_page(page, 0)
         return render_template('high_search.html', checked=checked, key=keys, docs=docs, page=page,
                                error=True)
@@ -168,6 +189,98 @@ def get_k_nearest(db_path, docid, k=5):
 
 #########################################
 # 注册登录
+@app.route('/login/', methods=['POST', 'GET'])
+def login():
+    try:
+        error = None
+        if request.method == 'POST':
+
+            username = request.form['username']
+            password = request.form['password']
+
+            conn = sqlite3.connect(db_path)
+            c = conn.cursor()
+
+            passwd_hash_tuple = c.execute(
+                'SELECT password FROM users WHERE username=?', [username]).fetchone()  # return a tuple
+
+            global rank
+            rank = c.execute(
+                'SELECT rank FROM users WHERE username=?', [username]).fetchone()[0]
+
+            if not passwd_hash_tuple:
+                error = 'Invalid username'
+            elif not sha256_crypt.verify(password, passwd_hash_tuple[0]):
+                error = 'Invalid password'
+            else:
+                flash('Hey %s, you are in' % username)
+                session['logged_in'] = True
+                session['username'] = username
+                global current_username
+                current_username = username
+                return render_template('search.html', error=False, username=current_username)
+
+        gc.collect()
+        return render_template('login.html', error=error)
+
+    except Exception as e:
+        return str(e)
+
+
+class RegistrationForm(Form):
+    username = TextField('Username', [validators.Length(min=4, max=20)])
+    rank = TextField('rank')
+    password = PasswordField('Password',
+                             [validators.Required(), validators.EqualTo('confirm', message='Passwords must match.')])
+    confirm = PasswordField('Password Again')
+    accept_tos = BooleanField("<small>I accept it</small>", [validators.Required()])
+
+
+@app.route('/register/', methods=['POST', 'GET'])
+def register():
+    try:
+        form = RegistrationForm(request.form)
+
+        if request.method == 'POST' and form.validate():
+            username = form.username.data
+            rank = form.rank.data
+            password = sha256_crypt.encrypt(
+                str(form.password.data))  # 对密码加密,生成一个hash值[每次调用生成不同的hash]（pip install passlib)
+
+            conn = sqlite3.connect(db_path)
+            c = conn.cursor()
+            x = c.execute(
+                'SELECT * FROM users WHERE username = ?', [username])
+
+            if x.fetchall():
+                flash("That username is already taken, please choose another")
+                return render_template('register.html', form=form)
+
+            else:
+                c.execute("INSERT INTO users (username, password, rank) VALUES(?,?,?)", [
+                    username, password, rank])
+
+                conn.commit()
+                conn.close()
+                gc.collect()  # collect garbage
+
+                session['logged_in'] = True
+                session['username'] = username
+
+                return redirect(url_for('login'))
+
+        return render_template('register.html', form=form)
+
+    except Exception as e:
+        return str(e)
+
+
+@app.route('/logout/')
+def logout():
+    # session.pop('user_id')
+    # del session('user_id')
+    session.clear()
+    return redirect(url_for('login'))
 
 
 if __name__ == '__main__':
